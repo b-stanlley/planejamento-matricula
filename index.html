@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Grade Curricular Interativa</title>
+    <link rel="stylesheet" href="styles.css">
+    <style>
+        .botoes {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+        
+        .btn {
+            padding: 8px 16px;
+            background-color: #4caf50;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 14px;
+        }
+        
+        .btn:hover {
+            background-color: #45a049;
+        }
+        
+        #grade-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 20px;
+            justify-content: flex-start;
+            margin: 0 auto;
+            max-width: 100%;
+            overflow-x: auto;
+            padding: 20px;
+        }
+        
+        .semestre {
+            width: 180px;
+            min-width: 180px;
+            max-width: 180px;
+            margin-bottom: 20px;
+        }
+        
+        /* Estilos adicionais para garantir que todos os semestres sejam exibidos */
+        body {
+            overflow-x: auto;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 100%;
+            overflow-x: auto;
+        }
+
+        .disciplina {
+            height: 68px;
+            min-height: 68px;
+            max-height: 68px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            margin-bottom: 24px;
+        }
+        .conexao.corequisito {
+            border-top: 3px dashed #007bff;
+            background: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Grade Curricular Interativa</h1>
+    <div class="top-bar" style="display: flex; align-items: center; gap: 32px; margin: 15px 0 10px 0; font-family: 'Segoe UI', Arial, sans-serif; font-size: 16px; justify-content: center;">
+            <div class="legenda" style="display: flex; gap: 30px; align-items: center;">
+                <span style="display: flex; align-items: center; gap: 8px;">
+                    <span style="display: inline-block; width: 40px; height: 0; border-top: 3px solid #444;"></span>
+                    Pré-requisito total
+                </span>
+                <span style="display: flex; align-items: center; gap: 8px;">
+                    <span style="display: inline-block; width: 40px; height: 0; border-top: 3px dotted #444;"></span>
+                    Pré-requisito parcial
+                </span>
+                <span style="display: flex; align-items: center; gap: 8px;">
+                    <span style="display: inline-block; width: 40px; height: 0; border-top: 3px dashed #007bff;"></span>
+                    Co-requisito
+                </span>
+            </div>
+            <label style="display: flex; align-items: center; gap: 8px; margin: 0;">
+                <input type="checkbox" id="filtro-pendentes"> Mostrar só matérias pendentes
+            </label>
+            <label style="display: flex; align-items: center; gap: 8px; margin: 0;">
+                <input type="checkbox" id="filtro-corequisitos"> Mostrar co-requisitos
+            </label>
+            <label style="display: flex; align-items: center; gap: 8px; margin: 0;">
+                <span>Grade:</span>
+                <select id="seletor-grade">
+                    <option value="grade2015.json">Grade 2015</option>
+                    <option value="grade2022.json">Grade 2022</option>
+                </select>
+            </label>
+            <label for="upload-historico" class="btn btn-historico" style="margin: 0; cursor:pointer; background-color: #007bff; color: white;">Enviar Histórico</label>
+            <input type="file" id="upload-historico" accept="application/pdf" style="display:none;">
+        </div>
+        <div id="grade-container"></div>
+    </div>
+    <!-- Adicione pdf.js via CDN -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
+    <script src="script.js"></script>
+    <script>
+        // Verificar se há JSON salvo no localStorage
+        document.addEventListener('DOMContentLoaded', () => {
+            const jsonSalvo = localStorage.getItem('gradeCurricularJSON');
+            if (jsonSalvo) {
+                try {
+                    const dados = JSON.parse(jsonSalvo);
+                    criarGradeCurricular(dados);
+                } catch (error) {
+                    console.error('Erro ao carregar JSON do localStorage:', error);
+                }
+            }
+            
+            // Botão para importar JSON
+            // ...existing code...
+            
+            // ...existing code...
+        });
+    </script>
+</body>
+</html>

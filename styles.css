@@ -1,0 +1,200 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Arial', sans-serif;
+}
+
+body {
+    background-color: #f5f5f5;
+}
+
+.container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 20px;
+}
+
+h1 {
+    text-align: center;
+    margin-bottom: 30px;
+    color: #333;
+}
+
+#grade-container {
+    display: flex;
+    justify-content: flex-start;
+    flex-wrap: wrap;
+    gap: 20px;
+    overflow-x: auto;
+    padding: 20px 0;
+}
+
+.semestre {
+    display: flex;
+    flex-direction: column;
+    min-width: 120px;
+}
+
+.semestre-header {
+    padding: 10px;
+    text-align: center;
+    font-weight: bold;
+    border-radius: 5px;
+    margin-bottom: 10px;
+    color: white;
+}
+
+.disciplina {
+    padding: 10px;
+    margin-bottom: 10px;
+    border-radius: 5px;
+    text-align: center;
+    color: white;
+    cursor: pointer;
+    transition: transform 0.2s, box-shadow 0.2s;
+    border: 2px solid rgba(0, 0, 0, 0.2);
+}
+
+.disciplina:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+}
+
+/* Cores para os semestres */
+/* Semestre 1 - Rosa */
+.semestre:nth-child(1) .semestre-header {
+    background-color: #c2185b; /* Rosa escuro */
+}
+.semestre:nth-child(1) .disciplina {
+    background-color: #e91e63; /* Rosa */
+}
+
+/* Semestre 2 - Verde */
+.semestre:nth-child(2) .semestre-header {
+    background-color: #2e7d32; /* Verde escuro */
+}
+.semestre:nth-child(2) .disciplina {
+    background-color: #4caf50; /* Verde */
+}
+
+/* Semestre 3 - Amarelo */
+.semestre:nth-child(3) .semestre-header {
+    background-color: #ff8f00; /* Âmbar escuro */
+}
+.semestre:nth-child(3) .disciplina {
+    background-color: #ffc107; /* Amarelo */
+}
+
+/* Semestre 4 - Azul */
+.semestre:nth-child(4) .semestre-header {
+    background-color: #0d47a1; /* Azul escuro */
+}
+.semestre:nth-child(4) .disciplina {
+    background-color: #2196f3; /* Azul */
+}
+
+/* Semestre 5 - Laranja */
+.semestre:nth-child(5) .semestre-header {
+    background-color: #e65100; /* Laranja escuro */
+}
+.semestre:nth-child(5) .disciplina {
+    background-color: #ff9800; /* Laranja */
+}
+
+/* Semestre 6 - Roxo */
+.semestre:nth-child(6) .semestre-header {
+    background-color: #6a1b9a; /* Roxo escuro */
+}
+.semestre:nth-child(6) .disciplina {
+    background-color: #9c27b0; /* Roxo */
+}
+
+/* Semestre 7 - Ciano */
+.semestre:nth-child(7) .semestre-header {
+    background-color: #00838f; /* Ciano escuro */
+}
+.semestre:nth-child(7) .disciplina {
+    background-color: #00bcd4; /* Ciano */
+}
+
+/* Semestre 8 - Rosa */
+.semestre:nth-child(8) .semestre-header {
+    background-color: #ad1457; /* Rosa escuro */
+}
+.semestre:nth-child(8) .disciplina {
+    background-color: #e91e63; /* Rosa */
+}
+
+/* Semestre 9 - Verde claro */
+.semestre:nth-child(9) .semestre-header {
+    background-color: #558b2f; /* Verde claro escuro */
+}
+.semestre:nth-child(9) .disciplina {
+    background-color: #8bc34a; /* Verde claro */
+}
+
+/* Linhas de conexão entre disciplinas */
+.conexao {
+    position: absolute;
+    background-color: #444;
+    z-index: -1;
+    transform-origin: 0 0;
+    transition: background-color 0.3s ease;
+    height: 3px;
+}
+
+.conexao.parcial {
+    border-top: 3px dotted #444;
+    background: none;
+    height: 0;
+}
+
+/* Estilos para destacar disciplinas e pré-requisitos */
+.disciplina {
+    transition: opacity 0.3s ease, transform 0.2s, box-shadow 0.2s;
+}
+
+.disciplina.destacado {
+    transform: scale(1.12);
+    box-shadow: 0 0 30px 10px rgba(255, 255, 0, 0.8);
+    z-index: 20;
+    opacity: 1;
+    background-color: #fff700 !important;
+    border: 4px solid #ffd600;
+    color: #333 !important;
+    font-weight: bold;
+}
+
+.disciplina.pre-requisito {
+    transform: scale(1.05);
+    box-shadow: 0 0 15px rgba(0, 255, 255, 0.7);
+    z-index: 10;
+    opacity: 1;
+}
+
+.disciplina.opaco {
+    opacity: 0.1;
+}
+
+.conexao.conexao-destacada {
+    background-color: #ffcc00;
+    height: 3px;
+    z-index: 5;
+}
+
+/* Tooltip para mostrar informações da disciplina */
+.tooltip {
+    position: absolute;
+    background-color: #333;
+    color: white;
+    padding: 10px;
+    border-radius: 5px;
+    z-index: 100;
+    max-width: 300px;
+    display: none;
+}
+
+.disciplina:hover + .tooltip {
+    display: block;
+}

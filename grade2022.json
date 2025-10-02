@@ -1,0 +1,702 @@
+{
+  "1º Período": [
+    {
+      "codigo": "MAT00A",
+      "disciplina": "Cálculo A",
+      "prerequisitos": {
+        "totais": [],
+        "parciais": []
+      },
+      "co_requisitos": []
+    },
+    {
+      "codigo": "ECOP11A",
+      "disciplina": "Técnicas de Programação",
+      "prerequisitos": {
+        "totais": [],
+        "parciais": []
+      },
+      "co_requisitos": []
+    },
+    {
+      "codigo": "ECO101A",
+      "disciplina": "Introdução à Engenharia de Computação",
+      "prerequisitos": {
+        "totais": [],
+        "parciais": []
+      },
+      "co_requisitos": []
+    },
+    {
+      "codigo": "ECOM00",
+      "disciplina": "Lógica para Engenharia",
+      "prerequisitos": {
+        "totais": [],
+        "parciais": []
+      },
+      "co_requisitos": []
+    },
+    {
+      "codigo": "ECOM10",
+      "disciplina": "Laboratório de Lógica para Engenharia",
+      "prerequisitos": {
+        "totais": [],
+        "parciais": []
+      },
+      "co_requisitos": ["ECOM00"]
+    },
+    {
+      "codigo": "ELTA00A",
+      "disciplina": "Circuitos e Eletrônica",
+      "prerequisitos": {
+        "totais": [],
+        "parciais": []
+      },
+      "co_requisitos": []
+    },
+    {
+      "codigo": "ELTA10A",
+      "disciplina": "Laboratório de Circuitos e Eletrônica",
+      "prerequisitos": {
+        "totais": [],
+        "parciais": []
+      },
+      "co_requisitos": ["ELTA00A"]
+    },
+    {
+      "codigo": "LET014",
+      "disciplina": "Comunicação Oral para fins Acadêmicos",
+      "prerequisitos": {
+        "totais": [],
+        "parciais": []
+      },
+      "co_requisitos": []
+    }
+  ],
+  "2º Período": [
+    {
+      "codigo": "MAT00D",
+      "disciplina": "Equações Diferenciais A",
+      "prerequisitos": {
+        "totais": ["MAT00A"],
+        "parciais": []
+      },
+      "co_requisitos": []
+    },
+    {
+      "codigo": "FIS210",
+      "disciplina": "Física I",
+      "prerequisitos": {
+        "totais": ["MAT00A"],
+        "parciais": []
+      },
+      "co_requisitos": []
+    },
+    {
+      "codigo": "FIS212",
+      "disciplina": "Física Experimental I",
+      "prerequisitos": {
+        "totais": [],
+        "parciais": []
+      },
+      "co_requisitos": ["FIS210"]
+    },
+    {
+      "codigo": "ECOP04",
+      "disciplina": "Programação Embarcada",
+      "prerequisitos": {
+        "totais": ["ECOP11A"],
+        "parciais": []
+      },
+      "co_requisitos": []
+    },
+    {
+      "codigo": "ECOP14",
+      "disciplina": "Laboratório de Programação Embarcada",
+      "prerequisitos": {
+        "totais": [],
+        "parciais": []
+      },
+      "co_requisitos": ["ECOP04"]
+    },
+    {
+      "codigo": "ECOP02A",
+      "disciplina": "Estruturas de Dados",
+      "prerequisitos": {
+        "totais": ["ECOP11A"],
+        "parciais": []
+      },
+      "co_requisitos": []
+    },
+    {
+      "codigo": "ECOM01A",
+      "disciplina": "Matemática Discreta",
+      "prerequisitos": {
+        "totais": ["ECOM00"],
+        "parciais": []
+      },
+      "co_requisitos": []
+    },
+    {
+      "codigo": "ECOM11A",
+      "disciplina": "Programação Funcional",
+      "prerequisitos": {
+        "totais": [],
+        "parciais": []
+      },
+      "co_requisitos": []
+    },
+    {
+      "codigo": "LET013",
+      "disciplina": "Escrita Acadêmico-Científica",
+      "prerequisitos": {
+        "totais": [],
+        "parciais": []
+      },
+      "co_requisitos": []
+    }
+  ],
+  "3º Período": [
+    {
+      "codigo": "MAT252",
+      "disciplina": "Álgebra Linear e Aplicações",
+      "prerequisitos": {
+        "totais": ["MAT00D"],
+        "parciais": []
+      },
+      "co_requisitos": []
+    },
+    {
+      "codigo": "FIS320",
+      "disciplina": "Física IIB",
+      "prerequisitos": {
+        "totais": ["FIS210"],
+        "parciais": []
+      },
+      "co_requisitos": []
+    },
+    {
+      "codigo": "FIS322",
+      "disciplina": "Física Experimental IIB",
+      "prerequisitos": {
+        "totais": ["FIS212"],
+        "parciais": []
+      },
+      "co_requisitos": ["FIS320"]
+    },
+    {
+      "codigo": "ELTA01A",
+      "disciplina": "Eletrônica Analógica I",
+      "prerequisitos": {
+        "totais": ["ELTA00A", "ELTA10A"],
+        "parciais": []
+      },
+      "co_requisitos": []
+    },
+    {
+      "codigo": "ELTA11A",
+      "disciplina": "Laboratório de Eletrônica Analógica I",
+      "prerequisitos": {
+        "totais": [],
+        "parciais": []
+      },
+      "co_requisitos": ["ELTA01A"]
+    },
+    {
+      "codigo": "ELTD01A",
+      "disciplina": "Eletrônica Digital I",
+      "prerequisitos": {
+        "totais": ["ECOM00", "ECOM10"],
+        "parciais": []
+      },
+      "co_requisitos": []
+    },
+    {
+      "codigo": "ELTD11A",
+      "disciplina": "Laboratório de Eletrônica Digital I",
+      "prerequisitos": {
+        "totais": [],
+        "parciais": []
+      },
+      "co_requisitos": ["ELTD01A"]
+    },
+    {
+      "codigo": "ECOM02A",
+      "disciplina": "Teoria dos Grafos",
+      "prerequisitos": {
+        "totais": ["ECOM01A"],
+        "parciais": []
+      },
+      "co_requisitos": []
+    },
+    {
+      "codigo": "ECOP13A",
+      "disciplina": "Programação Orientada a Objetos",
+      "prerequisitos": {
+        "totais": ["ECOP11A"],
+        "parciais": []
+      },
+      "co_requisitos": []
+    }
+  ],
+  "4º Período": [
+    {
+      "codigo": "ELTA02A",
+      "disciplina": "Eletrônica Analógica II",
+      "prerequisitos": {
+        "totais": ["ELTA01A", "ELTA11A"],
+        "parciais": []
+      },
+      "co_requisitos": []
+    },
+    {
+      "codigo": "ELTA12A",
+      "disciplina": "Laboratório de Eletrônica Analógica II",
+      "prerequisitos": {
+        "totais": [],
+        "parciais": []
+      },
+      "co_requisitos": ["ELTA02A"]
+    },
+    {
+      "codigo": "EMAG01",
+      "disciplina": "Eletromagnetismo",
+      "prerequisitos": {
+        "totais": ["FIS210",  "FIS212"],
+        "parciais": []
+      },
+      "co_requisitos": []
+    },
+    {
+      "codigo": "FIS413",
+      "disciplina": "Física Experimental III",
+      "prerequisitos": {
+        "totais": [],
+        "parciais": []
+      },
+      "co_requisitos": ["EMAG01"]
+    },
+    {
+      "codigo": "ELTD12A",
+      "disciplina": "Eletrônica Digital II",
+      "prerequisitos": {
+        "totais": ["ELTD01A", "ELTD11A"],
+        "parciais": []
+      },
+      "co_requisitos": []
+    },
+    {
+      "codigo": "ECOM03A",
+      "disciplina": "Análise de Algoritmos",
+      "prerequisitos": {
+        "totais": ["ECOP02A"],
+        "parciais": []
+      },
+      "co_requisitos": []
+    },
+    {
+      "codigo": "ECOS01A",
+      "disciplina": "Sistemas Operacionais",
+      "prerequisitos": {
+        "totais": ["ECOP02A", "ECOP04", "ECOP14"],
+        "parciais": []
+      },
+      "co_requisitos": []
+    },
+    {
+      "codigo": "ECOS11A",
+      "disciplina": "Laboratório de Sistemas Operacionais",
+      "prerequisitos": {
+        "totais": [],
+        "parciais": []
+      },
+      "co_requisitos": ["ECOS01A"]
+    },
+    {
+      "codigo": "ECOT02A",
+      "disciplina": "Projeto de Software",
+      "prerequisitos": {
+        "totais": ["ECOP13A"],
+        "parciais": []
+      },
+      "co_requisitos": []
+    },
+    {
+      "codigo": "ECOT12A",
+      "disciplina": "Laboratório de Projeto de Software",
+      "prerequisitos": {
+        "totais": [],
+        "parciais": []
+      },
+      "co_requisitos": ["ECOT02A"]
+    },
+    {
+      "codigo": "ECOM05A",
+      "disciplina": "Linguagens Formais",
+      "prerequisitos": {
+        "totais": ["ECOM02A"],
+        "parciais": []
+      },
+      "co_requisitos": []
+    }
+  ],
+  "5º Período": [
+    {
+      "codigo": "ECOT03A",
+      "disciplina": "Banco de Dados",
+      "prerequisitos": {
+        "totais": ["ECOT02A", "ECOT12A"],
+        "parciais": []
+      },
+      "co_requisitos": []
+    },
+    {
+      "codigo": "ECOT13A",
+      "disciplina": "Laboratório de Banco de Dados",
+      "prerequisitos": {
+        "totais": [],
+        "parciais": []
+      },
+      "co_requisitos": ["ECOT03A"]
+    },
+    {
+      "codigo": "ECO140A",
+      "disciplina": "Metodologia Científica e Análise de Dados",
+      "prerequisitos": {
+        "totais": ["ECOP02A", "ECOT02A", "ECOT12A"],
+        "parciais": []
+      },
+      "co_requisitos": []
+    },
+    {
+      "codigo": "ECO141A",
+      "disciplina": "Laboratório de Metodologia Científica e Análise de Dados",
+      "prerequisitos": {
+        "totais": [],
+        "parciais": []
+      },
+      "co_requisitos": ["ECO140A"]
+    },
+    {
+      "codigo": "ECAC09",
+      "disciplina": "Sinais e Sistemas e Introdução a Controle",
+      "prerequisitos": {
+        "totais": ["MAT00D"],
+        "parciais": []
+      },
+      "co_requisitos": []
+    },
+    {
+      "codigo": "ECAC19",
+      "disciplina": "Laboratório de Sinais e Sistemas e Introdução a Controle",
+      "prerequisitos": {
+        "totais": [],
+        "parciais": []
+      },
+      "co_requisitos": ["ECAC09"]
+    },
+    {
+      "codigo": "TELC03A",
+      "disciplina": "Redes de Computadores",
+      "prerequisitos": {
+        "totais": ["ECOM02A"],
+        "parciais": []
+      },
+      "co_requisitos": []
+    },
+    {
+      "codigo": "TELC13A",
+      "disciplina": "Laboratório de Redes de Computadores",
+      "prerequisitos": {
+        "totais": [],
+        "parciais": []
+      },
+      "co_requisitos": ["TELC03A"]
+    },
+    {
+      "codigo": "ECOS03",
+      "disciplina": "Sistemas Operacionais Embarcados",
+      "prerequisitos": {
+        "totais": ["ECOS01A", "ECOS11A", "ECOP04"],
+        "parciais": []
+      },
+      "co_requisitos": []
+    },
+    {
+      "codigo": "ECOS13",
+      "disciplina": "Laboratório de Sistemas Operacionais Embarcados",
+      "prerequisitos": {
+        "totais": [],
+        "parciais": []
+      },
+      "co_requisitos": ["ECOS03"]
+    },
+    {
+      "codigo": "ECOM06A",
+      "disciplina": "Compiladores",
+      "prerequisitos": {
+        "totais": ["ECOM05A"],
+        "parciais": []
+      },
+      "co_requisitos": []
+    },
+    {
+      "codigo": "ECOM07A",
+      "disciplina": "Métodos Numéricos e Computacionais",
+      "prerequisitos": {
+        "totais": ["ECOP02A", "MAT00A"],
+        "parciais": []
+      },
+      "co_requisitos": []
+    }
+  ],
+  "6º Período": [
+    {
+      "codigo": "ELTD03A",
+      "disciplina": "Microcontroladores e Microprocessadores",
+      "prerequisitos": {
+        "totais": ["ELTD01A", "ELTD11A", "ECOP04", "ECOP14"],
+        "parciais": []
+      },
+      "co_requisitos": []
+    },
+    {
+      "codigo": "ELTD13A",
+      "disciplina": "Laboratório de Microcontroladores e Microprocessadores",
+      "prerequisitos": {
+        "totais": [],
+        "parciais": []
+      },
+      "co_requisitos": ["ELTD03A"]
+    },
+    {
+      "codigo": "TELC01A",
+      "disciplina": "Telecomunicações I",
+      "prerequisitos": {
+        "totais": ["MAT00D"],
+        "parciais": []
+      },
+      "co_requisitos": []
+    },
+    {
+      "codigo": "TELC11A",
+      "disciplina": "Laboratório de Telecomunicações I",
+      "prerequisitos": {
+        "totais": [],
+        "parciais": []
+      },
+      "co_requisitos": ["TELC01A"]
+    },
+    {
+      "codigo": "ECOI03A",
+      "disciplina": "Engenharia de Software",
+      "prerequisitos": {
+        "totais": ["ECOP13A"],
+        "parciais": []
+      },
+      "co_requisitos": []
+    },
+    {
+      "codigo": "ECOI13A",
+      "disciplina": "Laboratório de Engenharia de Software",
+      "prerequisitos": {
+        "totais": [],
+        "parciais": []
+      },
+      "co_requisitos": ["ECOT01A"]
+    },
+    {
+      "codigo": "ECOS02A",
+      "disciplina": "Sistemas Distribuídos",
+      "prerequisitos": {
+        "totais": ["ECOS01A", "ECOS11A"],
+        "parciais": []
+      },
+      "co_requisitos": []
+    },
+    {
+      "codigo": "ECOS12A",
+      "disciplina": "Laboratório de Sistemas Distribuídos",
+      "prerequisitos": {
+        "totais": [],
+        "parciais": []
+      },
+      "co_requisitos": ["ECOS02A"]
+    },
+    {
+      "codigo": "ECOM08A",
+      "disciplina": "Inteligência Artificial I",
+      "prerequisitos": {
+        "totais": ["ECOM02A"],
+        "parciais": []
+      },
+      "co_requisitos": []
+    },
+    {
+      "codigo": "PBLE00",
+      "disciplina": "Fundamentos de Projetos Mecânicos",
+      "prerequisitos": {
+        "totais": [],
+        "parciais": []
+      },
+      "co_requisitos": []
+    }
+  ],
+  "7º Período": [
+    {
+      "codigo": "ELTD05A",
+      "disciplina": "Projeto de Sistemas Digitais",
+      "prerequisitos": {
+        "totais": ["ELTD12A"],
+        "parciais": []
+      },
+      "co_requisitos": []
+    },
+    {
+      "codigo": "ELTD15A",
+      "disciplina": "Laboratório de Projeto de Sistemas Digitais",
+      "prerequisitos": {
+        "totais": [],
+        "parciais": []
+      },
+      "co_requisitos": ["ELTD05A"]
+    },
+    {
+      "codigo": "ECOS04",
+      "disciplina": "Simulação e Avaliação de Desempenho",
+      "prerequisitos": {
+        "totais": ["ECOS02A", "ECOS12A"],
+        "parciais": []
+      },
+      "co_requisitos": []
+    },
+    {
+      "codigo": "ELTD052A",
+      "disciplina": "Química e Ciência dos materiais",
+      "prerequisitos": {
+        "totais": [],
+        "parciais": []
+      },
+      "co_requisitos": []
+    },
+    {
+      "codigo": "QUI212",
+      "disciplina": "Química Geral Experimental",
+      "prerequisitos": {
+        "totais": [],
+        "parciais": []
+      },
+      "co_requisitos": ["ELTD052A"]
+    },
+    {
+      "codigo": "ECOM09A",
+      "disciplina": "Inteligência Artificial II",
+      "prerequisitos": {
+        "totais": ["ECOM08A"],
+        "parciais": []
+      },
+      "co_requisitos": []
+    },
+    {
+      "codigo": "TELC02A",
+      "disciplina": "Telecomunicações II",
+      "prerequisitos": {
+        "totais": ["TELC01A", "TELC11A", "ELTA02A", "ELTA12A"],
+        "parciais": []
+      },
+      "co_requisitos": []
+    },
+    {
+      "codigo": "TELC12A",
+      "disciplina": "Laboratório de Telecomunicações II",
+      "prerequisitos": {
+        "totais": [],
+        "parciais": []
+      },
+      "co_requisitos": ["TELC02A"]
+    },
+    {
+      "codigo": "PBLC01",
+      "disciplina": "Desenvolvimento de Projeto de Software",
+      "prerequisitos": {
+        "totais": ["ECOT03A", "ECOT13A"],
+        "parciais": []
+      },
+      "co_requisitos": []
+    },
+    {
+      "codigo": "IEPG20",
+      "disciplina": "Introdução à Economia",
+      "prerequisitos": {
+        "totais": [],
+        "parciais": []
+      },
+      "co_requisitos": []
+    }
+  ],
+  "8º Período": [
+    {
+      "codigo": "ECAC14A",
+      "disciplina": "Processamento Digital de Sinais",
+      "prerequisitos": {
+        "totais": ["ECAC09", "ECAC19"],
+        "parciais": []
+      },
+      "co_requisitos": []
+    },
+    {
+      "codigo": "ELTD04A",
+      "disciplina": "Microprocessador Avançado",
+      "prerequisitos": {
+        "totais": ["ELTD03A", "ELTD13A"],
+        "parciais": []
+      },
+      "co_requisitos": []
+    },
+    {
+      "codigo": "ELTD14A",
+      "disciplina": "Laboratório de Microprocessador Avançado",
+      "prerequisitos": {
+        "totais": [],
+        "parciais": []
+      },
+      "co_requisitos": ["ELTD04A"]
+    },
+    {
+      "codigo": "ECO103",
+      "disciplina": "Informática e Sociedade",
+      "prerequisitos": {
+        "totais": ["ECO101A"],
+        "parciais": []
+      },
+      "co_requisitos": []
+    },
+    {
+      "codigo": "EM1070",
+      "disciplina": "Materiais e Ambiente",
+      "prerequisitos": {
+        "totais": [],
+        "parciais": []
+      },
+      "co_requisitos": []
+    },
+    {
+      "codigo": "IEPG22",
+      "disciplina": "Administração Aplicada",
+      "prerequisitos": {
+        "totais": [],
+        "parciais": []
+      },
+      "co_requisitos": []
+    },
+    {
+      "codigo": "IEPG10",
+      "disciplina": "Engenharia Econômica",
+      "prerequisitos": {
+        "totais": [],
+        "parciais": []
+      },
+      "co_requisitos": []
+    }
+  ]
+}
