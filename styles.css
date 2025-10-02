@@ -10,9 +10,11 @@ body {
 }
 
 .container {
-    max-width: 1200px;
-    margin: 0 auto;
-    padding: 20px;
+    width: 100%;
+    max-width: 100%;
+    margin: 0;
+    padding-left: 16px;
+    padding-right: 16px;
 }
 
 h1 {
@@ -23,17 +25,21 @@ h1 {
 
 #grade-container {
     display: flex;
-    justify-content: flex-start;
-    flex-wrap: wrap;
-    gap: 20px;
-    overflow-x: auto;
-    padding: 20px 0;
+    justify-content: stretch;
+    flex-wrap: nowrap;
+    gap: 12px;
+    overflow-x: hidden;
+    padding: 0;
+    width: 100%;
 }
 
 .semestre {
     display: flex;
     flex-direction: column;
-    min-width: 120px;
+    flex: 1 1 0;
+    min-width: 60px;
+    max-width: 1fr;
+    width: 100%;
 }
 
 .semestre-header {
