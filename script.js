@@ -2,6 +2,388 @@
 let materias;
 let mostrarPendentes = false;
 let mostrarCorequisitos = false;
+let telaAtual = 'grade';
+let historicoCarregado = false;
+
+// Variáveis de zoom
+let zoomLevel = 100; // Nível de zoom em percentual
+const MIN_ZOOM = 50;
+const MAX_ZOOM = 200;
+const ZOOM_STEP = 10;
+
+// Função para atualizar o zoom
+function atualizarZoom(novoZoom) {
+    // Limitar zoom entre MIN_ZOOM e MAX_ZOOM
+    zoomLevel = Math.max(MIN_ZOOM, Math.min(MAX_ZOOM, novoZoom));
+    
+    const gradeContainer = document.getElementById('grade-container');
+    if (gradeContainer) {
+        gradeContainer.style.transform = `scale(${zoomLevel / 100})`;
+        gradeContainer.style.transformOrigin = 'top center';
+    }
+    
+    // Atualizar exibição do nível de zoom
+    const zoomLevelDisplay = document.getElementById('zoom-level');
+    if (zoomLevelDisplay) {
+        zoomLevelDisplay.textContent = `${zoomLevel}%`;
+    }
+    
+    // Salvar o nível de zoom no localStorage
+    localStorage.setItem('zoomLevel', zoomLevel);
+}
+
+// Função para aumentar zoom
+function aumentarZoom() {
+    atualizarZoom(zoomLevel + ZOOM_STEP);
+}
+
+// Função para diminuir zoom
+function diminuirZoom() {
+    atualizarZoom(zoomLevel - ZOOM_STEP);
+}
+
+// Função para resetar zoom
+function resetarZoom() {
+    atualizarZoom(100);
+}
+
+function obterNumeroPeriodo(nomePeriodo) {
+    const match = nomePeriodo.match(/\d+/);
+    return match ? parseInt(match[0], 10) : 0;
+}
+
+function mostrarTela(nomeTela) {
+    telaAtual = nomeTela;
+    const telaGrade = document.getElementById('tela-grade');
+    const telaPlanos = document.getElementById('tela-planos');
+    const btnGrade = document.getElementById('btn-tela-grade');
+    const btnPlanos = document.getElementById('btn-tela-planos');
+
+    if (!telaGrade || !telaPlanos || !btnGrade || !btnPlanos) return;
+
+    const mostrarGrade = nomeTela === 'grade';
+    telaGrade.classList.toggle('active', mostrarGrade);
+    telaPlanos.classList.toggle('active', !mostrarGrade);
+    btnGrade.classList.toggle('active', mostrarGrade);
+    btnPlanos.classList.toggle('active', !mostrarGrade);
+}
+
+function atualizarAcessoTelaPlanos() {
+    const btnPlanos = document.getElementById('btn-tela-planos');
+    if (!btnPlanos) return;
+
+    btnPlanos.disabled = !historicoCarregado;
+    btnPlanos.classList.toggle('locked', !historicoCarregado);
+    btnPlanos.title = historicoCarregado
+        ? 'Abrir tela de planos de matricula'
+        : 'Envie o historico para liberar os planos de matricula';
+}
+
+function popularSelectPeriodos() {
+    const periodoSelect = document.getElementById('periodo-atual-select');
+    if (!periodoSelect || !materias || !materias.semestres) return;
+
+    periodoSelect.innerHTML = '';
+    const optionAuto = document.createElement('option');
+    optionAuto.value = 'auto';
+    optionAuto.textContent = 'Automatico (com base no historico)';
+    periodoSelect.appendChild(optionAuto);
+
+    materias.semestres.forEach((semestre) => {
+        const option = document.createElement('option');
+        option.value = String(obterNumeroPeriodo(semestre.nome));
+        option.textContent = semestre.nome;
+        periodoSelect.appendChild(option);
+    });
+
+    periodoSelect.value = 'auto';
+}
+
+function obterTodosCodigosGrade() {
+    const codigos = new Set();
+    if (!materias || !materias.semestres) return codigos;
+
+    materias.semestres.forEach((semestre) => {
+        semestre.disciplinas.forEach((disc) => codigos.add(disc.id.trim().toUpperCase()));
+    });
+
+    return codigos;
+}
+
+function extrairCodigosSecaoHistorico(textoCompleto, tituloSecao, delimitadores, codigosGrade) {
+    const inicio = textoCompleto.indexOf(tituloSecao);
+    if (inicio === -1) return [];
+
+    let trecho = textoCompleto.substring(inicio);
+    let fim = -1;
+    delimitadores.forEach((delim) => {
+        const idx = trecho.indexOf(delim);
+        if (idx !== -1 && (fim === -1 || idx < fim)) {
+            fim = idx;
+        }
+    });
+
+    if (fim !== -1) {
+        trecho = trecho.substring(0, fim);
+    }
+
+    const capturados = trecho.match(/\b[A-Z]{3,5}[\s\u200B-\u200D]*\d{2,3}[A-Z]?\b/g) || [];
+    const normalizados = capturados
+        .map((codigo) => codigo.replace(/[\s\u200B-\u200D]/g, '').trim().toUpperCase())
+        .filter((codigo) => codigosGrade.has(codigo));
+
+    return Array.from(new Set(normalizados));
+}
+
+function obterDisciplinasAprovadas() {
+    const aprovadas = new Set();
+
+    if (window.materiasCursadas && window.materiasCursadas.length > 0) {
+        window.materiasCursadas.forEach((id) => aprovadas.add(id.trim().toUpperCase()));
+        return aprovadas;
+    }
+
+    if (window.materiasPendentes && window.materiasPendentes.length > 0) {
+        const pendentes = new Set(window.materiasPendentes.map((id) => id.trim().toUpperCase()));
+        obterTodosCodigosGrade().forEach((codigo) => {
+            if (!pendentes.has(codigo)) {
+                aprovadas.add(codigo);
+            }
+        });
+    }
+
+    return aprovadas;
+}
+
+function inferirPeriodoAtual(aprovadas) {
+    if (!materias || !materias.semestres || materias.semestres.length === 0) return 1;
+
+    // Encontra o período mais avançado onde o aluno tem ao menos uma aprovação.
+    // Se esse período estiver 100% completo, o atual é o próximo.
+    let maisAvancadoComAprovacao = 0;
+    let maisAvancadoCompleto = false;
+
+    for (const semestre of materias.semestres) {
+        const numero = obterNumeroPeriodo(semestre.nome);
+        const total = semestre.disciplinas.length;
+        const concluidas = semestre.disciplinas.filter((disc) => aprovadas.has(disc.id.trim().toUpperCase())).length;
+
+        if (concluidas > 0) {
+            maisAvancadoComAprovacao = numero;
+            maisAvancadoCompleto = concluidas === total;
+        }
+    }
+
+    if (maisAvancadoComAprovacao === 0) return 1;
+
+    if (maisAvancadoCompleto) {
+        const maxPeriodo = obterNumeroPeriodo(materias.semestres[materias.semestres.length - 1].nome);
+        return Math.min(maisAvancadoComAprovacao + 1, maxPeriodo);
+    }
+
+    return maisAvancadoComAprovacao;
+}
+
+function validarPreRequisitos(disciplina, aprovadas) {
+    const reqTotais = (disciplina.requisitosTotais || []).map((id) => id.trim().toUpperCase());
+    const reqParciais = (disciplina.requisitosParciais || []).map((id) => id.trim().toUpperCase());
+
+    const faltandoTotais = reqTotais.filter((id) => !aprovadas.has(id));
+    const parcialOk = reqParciais.length === 0 || reqParciais.some((id) => aprovadas.has(id));
+    const faltandoParciais = parcialOk ? [] : reqParciais;
+
+    return {
+        apta: faltandoTotais.length === 0 && faltandoParciais.length === 0,
+        faltandoTotais,
+        faltandoParciais
+    };
+}
+
+function montarItemPlano(disciplina, aprovadas) {
+    const validacao = validarPreRequisitos(disciplina, aprovadas);
+    return {
+        codigo: disciplina.id,
+        nome: disciplina.nome,
+        apta: validacao.apta,
+        faltandoTotais: validacao.faltandoTotais,
+        faltandoParciais: validacao.faltandoParciais,
+        coRequisitos: disciplina.coRequisitos || [],
+        bloqueadoPorCoReq: []
+    };
+}
+
+function gerarPlanoMatriculaPadrao(periodoAtual) {
+    if (!materias || !materias.semestres) return null;
+
+    const aprovadas = obterDisciplinasAprovadas();
+    const periodoInferido = inferirPeriodoAtual(aprovadas);
+    const periodoUsado = periodoAtual || periodoInferido;
+
+    // Primeira passagem: monta todos os itens nao aprovados com seu numero de periodo
+    const todosItens = new Map(); // codigo -> { item, numero }
+    materias.semestres.forEach((semestre) => {
+        const numero = obterNumeroPeriodo(semestre.nome);
+        semestre.disciplinas.forEach((disciplina) => {
+            const codigo = disciplina.id.trim().toUpperCase();
+            if (!aprovadas.has(codigo)) {
+                todosItens.set(codigo, { item: montarItemPlano(disciplina, aprovadas), numero });
+            }
+        });
+    });
+
+    // Segunda passagem: propagacao de bloqueio por co-requisito (ponto fixo)
+    // Se X e co-requisito de Y e X esta bloqueada, entao Y tambem fica bloqueada
+    let changed = true;
+    while (changed) {
+        changed = false;
+        todosItens.forEach(({ item }) => {
+            if (!item.apta) return;
+            for (const coreqId of item.coRequisitos) {
+                const coreqCodigo = coreqId.trim().toUpperCase();
+                if (aprovadas.has(coreqCodigo)) continue;
+                const entry = todosItens.get(coreqCodigo);
+                if (!entry) continue;
+                if (!entry.item.apta) {
+                    item.apta = false;
+                    item.bloqueadoPorCoReq.push(coreqCodigo);
+                    changed = true;
+                    break;
+                }
+            }
+        });
+    }
+
+    // Distribui itens nos grupos
+    const atual = [];
+    const atrasadas = [];
+    const adiantamento = [];
+
+    todosItens.forEach(({ item, numero }) => {
+        if (numero === periodoUsado) {
+            atual.push(item);
+        } else if (numero < periodoUsado) {
+            atrasadas.push(item);
+        } else if (numero > periodoUsado && numero <= periodoUsado + 2) {
+            adiantamento.push(item);
+        }
+    });
+
+    return {
+        periodoInferido,
+        periodoUsado,
+        atual,
+        atrasadas,
+        adiantamento,
+        totalAprovadas: aprovadas.size
+    };
+}
+
+function renderizarGrupoPlano(titulo, lista, statusTextoApta) {
+    if (lista.length === 0) return '';
+
+    const items = lista.map((item) => {
+        const classeItem = item.apta ? '' : 'bloqueada';
+        const classeStatus = item.apta ? 'ok' : 'bloqueada';
+        const motivosBloqueio = [...item.faltandoTotais, ...item.faltandoParciais];
+        if (item.bloqueadoPorCoReq && item.bloqueadoPorCoReq.length > 0) {
+            item.bloqueadoPorCoReq.forEach((c) => motivosBloqueio.push(`co-req ${c} bloqueado`));
+        }
+        const statusTexto = item.apta
+            ? statusTextoApta
+            : `Bloqueada: faltam ${motivosBloqueio.join(', ')}`;
+
+        const coreq = item.coRequisitos.length > 0
+            ? `<p class="plano-coreq">Co-requisito(s): ${item.coRequisitos.join(', ')}</p>`
+            : '';
+
+        return `<article class="plano-item ${classeItem}"><h3>${item.codigo} - ${item.nome}</h3><span class="plano-status ${classeStatus}">${statusTexto}</span>${coreq}</article>`;
+    }).join('');
+
+    return `<section class="plano-grupo"><h4>${titulo}</h4><div class="plano-lista">${items}</div></section>`;
+}
+
+function renderizarPlanoMatricula() {
+    const tipoPlanoSelect = document.getElementById('tipo-plano-select');
+    const periodoSelect = document.getElementById('periodo-atual-select');
+    const resultado = document.getElementById('resultado-plano');
+
+    if (!tipoPlanoSelect || !periodoSelect || !resultado) return;
+    const periodoAtual = periodoSelect.value === 'auto' ? null : parseInt(periodoSelect.value, 10);
+    if (periodoSelect.value !== 'auto' && Number.isNaN(periodoAtual)) {
+        resultado.innerHTML = '<p>Selecione um periodo valido.</p>';
+        return;
+    }
+
+    const tipoPlano = tipoPlanoSelect.value;
+    if (tipoPlano !== 'padrao' && tipoPlano !== 'avancado') {
+        resultado.innerHTML = '<p>Tipo de plano nao suportado.</p>';
+        return;
+    }
+
+    const plano = gerarPlanoMatriculaPadrao(periodoAtual);
+    if (!plano) {
+        resultado.innerHTML = '<p>Nao foi possivel gerar plano para o periodo selecionado.</p>';
+        return;
+    }
+
+    const cardsAtual = renderizarGrupoPlano('Sugestao principal (periodo atual)', plano.atual, 'Apta para matricula');
+    const cardsAtrasadas = renderizarGrupoPlano('Disciplinas atrasadas sugeridas', plano.atrasadas, 'Apta para regularizacao');
+    const cardsAdiantamento = renderizarGrupoPlano('Possivel adiantamento (periodos posteriores)', plano.adiantamento, 'Apta para adiantamento');
+    const incluirAdiantamento = tipoPlano === 'avancado';
+
+    const aptasAtual = plano.atual.filter(i => i.apta).length;
+    const aptasAtrasadas = plano.atrasadas.filter(i => i.apta).length;
+    const aptasAdiantamento = plano.adiantamento.filter(i => i.apta).length;
+
+    resultado.innerHTML = `
+        <div class="plano-resumo">
+            <p><strong>Periodo analisado: ${plano.periodoUsado}</strong> ${periodoSelect.value === 'auto' ? `(inferido: ${plano.periodoInferido})` : ''}</p>
+            <p>${aptasAtual} do periodo atual aptas, ${aptasAtrasadas} atrasada(s) apta(s)${incluirAdiantamento ? ` e ${aptasAdiantamento} para adiantamento` : ''}.</p>
+            <p class="plano-nota">Analise feita com as materias cursadas do historico (quando encontradas) e validacao de pre-requisitos.</p>
+        </div>
+        ${cardsAtual}
+        ${cardsAtrasadas}
+        ${incluirAdiantamento ? cardsAdiantamento : ''}
+    `;
+}
+
+function inicializarNavegacaoTelas() {
+    const btnTelaGrade = document.getElementById('btn-tela-grade');
+    const btnTelaPlanos = document.getElementById('btn-tela-planos');
+
+    if (btnTelaGrade) {
+        btnTelaGrade.addEventListener('click', () => mostrarTela('grade'));
+    }
+
+    if (btnTelaPlanos) {
+        btnTelaPlanos.addEventListener('click', () => {
+            if (!historicoCarregado) {
+                alert('Para acessar planos de matricula, envie o historico em PDF primeiro.');
+                return;
+            }
+            mostrarTela('planos');
+            renderizarPlanoMatricula();
+        });
+    }
+}
+
+function inicializarTelaPlanos() {
+    const btnGerarPlano = document.getElementById('gerar-plano-btn');
+    const periodoSelect = document.getElementById('periodo-atual-select');
+    const tipoPlanoSelect = document.getElementById('tipo-plano-select');
+
+    if (btnGerarPlano) {
+        btnGerarPlano.addEventListener('click', renderizarPlanoMatricula);
+    }
+
+    if (periodoSelect) {
+        periodoSelect.addEventListener('change', renderizarPlanoMatricula);
+    }
+
+    if (tipoPlanoSelect) {
+        tipoPlanoSelect.addEventListener('change', renderizarPlanoMatricula);
+    }
+}
 
 // Função para carregar o JSON do arquivo
 async function carregarJSONDoArquivo(nomeArquivo = 'grade2015.json') {
@@ -205,6 +587,10 @@ function desenharLinha(elementoA, elementoB) {
 
 // Evento de carregamento da página
 window.addEventListener('load', async () => {
+    inicializarNavegacaoTelas();
+    inicializarTelaPlanos();
+    atualizarAcessoTelaPlanos();
+
     // Integração com upload do histórico PDF
     const uploadHistorico = document.getElementById('upload-historico');
     if (uploadHistorico) {
@@ -219,45 +605,50 @@ window.addEventListener('load', async () => {
                 const content = await page.getTextContent();
                 textoCompleto += content.items.map(item => item.str).join(' ') + '\n';
             }
-            // Buscar a seção de Componentes Curriculares Obrigatórios Pendentes
-            const inicioPendentes = textoCompleto.indexOf('Componentes Curriculares Obrigatórios Pendentes');
-            let codigosPendentes = [];
-            if (inicioPendentes !== -1) {
-                // Pega o texto a partir da seção
-                let textoPendentes = textoCompleto.substring(inicioPendentes);
-                // Limita até a próxima seção relevante
-                let delimitadores = [
+            const codigosGrade = obterTodosCodigosGrade();
+
+            const codigosPendentes = extrairCodigosSecaoHistorico(
+                textoCompleto,
+                'Componentes Curriculares Obrigatórios Pendentes',
+                [
                     'Componentes Curriculares Optativos',
                     'Equivalências:',
                     'Componentes Curriculares Eletivos',
                     'Componentes Curriculares Obrigatórios Cursados'
-                ];
-                let fimPendentes = -1;
-                for (const delim of delimitadores) {
-                    const idx = textoPendentes.indexOf(delim);
-                    if (idx !== -1 && (fimPendentes === -1 || idx < fimPendentes)) {
-                        fimPendentes = idx;
-                    }
-                }
-                if (fimPendentes !== -1) {
-                    textoPendentes = textoPendentes.substring(0, fimPendentes);
-                }
-                // Extrai códigos juntos ou separados por espaços/caracteres invisíveis
-                codigosPendentes = Array.from(new Set(
-                    textoPendentes.match(/\b[A-Z]{3,5}[\s\u200B-\u200D]*\d{2,3}[A-Z]?\b/g)
-                ));
-                // Normaliza para remover espaços/caracteres invisíveis
-                codigosPendentes = codigosPendentes ? codigosPendentes.map(c => c.replace(/[\s\u200B-\u200D]/g, '').trim().toUpperCase()) : [];
+                ],
+                codigosGrade
+            );
+
+            let codigosCursados = extrairCodigosSecaoHistorico(
+                textoCompleto,
+                'Componentes Curriculares Obrigatórios Cursados',
+                [
+                    'Componentes Curriculares Obrigatórios Pendentes',
+                    'Componentes Curriculares Optativos',
+                    'Equivalências:',
+                    'Componentes Curriculares Eletivos'
+                ],
+                codigosGrade
+            );
+
+            if (codigosCursados.length === 0 && codigosPendentes.length > 0) {
+                codigosCursados = Array.from(codigosGrade).filter((codigo) => !codigosPendentes.includes(codigo));
             }
-            // Filtra apenas códigos que existem na grade curricular
-            const codigosGrade = new Set();
-            materias.semestres.forEach(sem => sem.disciplinas.forEach(disc => codigosGrade.add(disc.id.trim().toUpperCase())));
-            window.materiasPendentes = codigosPendentes
-                ? codigosPendentes.map(c => c.replace(/[\s\u200B-\u200D]/g, '').trim().toUpperCase()).filter(c => codigosGrade.has(c))
-                : [];
-            alert('Matérias pendentes identificadas: ' + window.materiasPendentes.join(', '));
+
+            window.materiasPendentes = codigosPendentes;
+            window.materiasCursadas = codigosCursados;
+            historicoCarregado = true;
+            atualizarAcessoTelaPlanos();
+
+            const periodoInferido = inferirPeriodoAtual(new Set(window.materiasCursadas || []));
+            alert(
+                `Histórico analisado. Cursadas: ${window.materiasCursadas.length}. Pendentes: ${window.materiasPendentes.length}. Período inferido: ${periodoInferido}.`
+            );
             // Não ativa o filtro automaticamente, apenas atualiza a visualização normal
             criarGradeCurricular(materias);
+            if (telaAtual === 'planos') {
+                renderizarPlanoMatricula();
+            }
         });
     }
     console.log('Página carregada, iniciando carregamento do JSON...');
@@ -267,11 +658,23 @@ window.addEventListener('load', async () => {
     let nomeGradeAtual = seletorGrade ? seletorGrade.value : 'grade2015.json';
     materias = await carregarJSONDoArquivo(nomeGradeAtual);
     criarGradeCurricular(materias);
+    popularSelectPeriodos();
     if (seletorGrade) {
         seletorGrade.addEventListener('change', async (e) => {
             nomeGradeAtual = e.target.value;
             materias = await carregarJSONDoArquivo(nomeGradeAtual);
+            window.materiasPendentes = [];
+            window.materiasCursadas = [];
+            historicoCarregado = false;
+            atualizarAcessoTelaPlanos();
+            if (telaAtual === 'planos') {
+                mostrarTela('grade');
+            }
             criarGradeCurricular(materias);
+            popularSelectPeriodos();
+            if (telaAtual === 'planos') {
+                renderizarPlanoMatricula();
+            }
         });
     }
     
@@ -561,6 +964,47 @@ document.addEventListener('click', (event) => {
         resetarDestaque();
     }
 });
+
+// Função para inicializar os controles de zoom
+function inicializarControlesZoom() {
+    // Carregar zoom salvo do localStorage
+    const zoomSalvo = localStorage.getItem('zoomLevel');
+    if (zoomSalvo) {
+        atualizarZoom(parseInt(zoomSalvo));
+    } else {
+        atualizarZoom(100);
+    }
+    
+    // Event listeners para os botões
+    const zoomInBtn = document.getElementById('zoom-in-btn');
+    const zoomOutBtn = document.getElementById('zoom-out-btn');
+    
+    if (zoomInBtn) {
+        zoomInBtn.addEventListener('click', aumentarZoom);
+    }
+    
+    if (zoomOutBtn) {
+        zoomOutBtn.addEventListener('click', diminuirZoom);
+    }
+    
+    // Event listener para scroll do mouse (zoom com Ctrl + scroll)
+    const gradeContainer = document.getElementById('grade-container');
+    if (gradeContainer) {
+        gradeContainer.addEventListener('wheel', (event) => {
+            // Verificar se Ctrl está pressionado
+            if (event.ctrlKey) {
+                event.preventDefault();
+                
+                // Scroll para cima aumenta zoom, scroll para baixo diminui
+                if (event.deltaY < 0) {
+                    aumentarZoom();
+                } else {
+                    diminuirZoom();
+                }
+            }
+        }, { passive: false });
+    }
+}
 
 // Expor função para uso externo
 window.carregarJSON = carregarJSON;
