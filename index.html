@@ -4,54 +4,69 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Grade Curricular Interativa</title>
-    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="assets/styles/main.css">
 
 </head>
 <body>
     <div class="container">
-        <h1>Grade Curricular Interativa</h1>
-        <div class="view-switcher">
-            <button id="btn-tela-grade" class="view-btn active">Tela Inicial</button>
-            <button id="btn-tela-planos" class="view-btn">Planos de matrícula</button>
+        <div class="app-header">
+            <h1>Grade Curricular Interativa</h1>
+            <div class="view-switcher">
+                <button id="btn-tela-grade" class="view-btn active">Tela Inicial</button>
+                <button id="btn-tela-planos" class="view-btn">Planos de matrícula</button>
+            </div>
         </div>
+        
         <section id="tela-grade" class="view-section active">
-    <div class="top-bar" style="display: flex; align-items: center; gap: 32px; margin: 15px 0 10px 0; font-family: 'Segoe UI', Arial, sans-serif; font-size: 16px; justify-content: center;">
-            <div class="legenda" style="display: flex; gap: 30px; align-items: center;">
-                <span style="display: flex; align-items: center; gap: 8px;">
-                    <span style="display: inline-block; width: 40px; height: 0; border-top: 3px solid #444;"></span>
-                    Pré-requisito total
-                </span>
-                <span style="display: flex; align-items: center; gap: 8px;">
-                    <span style="display: inline-block; width: 40px; height: 0; border-top: 3px dotted #444;"></span>
-                    Pré-requisito parcial
-                </span>
-                <span style="display: flex; align-items: center; gap: 8px;">
-                    <span style="display: inline-block; width: 40px; height: 0; border-top: 3px dashed #007bff;"></span>
-                    Co-requisito
-                </span>
+            <div class="grade-stage">
+                <div class="stage-header">
+                    <aside class="floating-card floating-card--filters">
+                        <h2 class="floating-card-title">Filtros e Grade</h2>
+                        <div class="floating-card-content floating-card-content--stack">
+                            <label class="top-bar-field top-bar-field--toggle">
+                                <input type="checkbox" id="filtro-pendentes"> Mostrar só matérias pendentes
+                            </label>
+                            <label class="top-bar-field top-bar-field--toggle">
+                                <input type="checkbox" id="filtro-corequisitos"> Mostrar co-requisitos
+                            </label>
+                            <label class="top-bar-field top-bar-field--select">
+                                <span>Grade:</span>
+                                <select id="seletor-grade">
+                                    <option value="data/grade2015.json">Grade 2015</option>
+                                    <option value="data/grade2022.json">Grade 2022</option>
+                                </select>
+                            </label>
+                            <label for="upload-historico" class="btn btn-historico">Enviar Histórico</label>
+                            <input type="file" id="upload-historico" accept="application/pdf" style="display:none;">
+                            <div class="legenda" style="flex-shrink: 0; margin-left: auto;">
+                                <span class="legend-label">Legenda:</span>
+                                <span class="legend-item">
+                                    <span class="legend-line legend-line--solid"></span>
+                                    Pré-requisito total
+                                </span>
+                                <span class="legend-item">
+                                    <span class="legend-line legend-line--dotted"></span>
+                                    Pré-requisito parcial
+                                </span>
+                                <span class="legend-item">
+                                    <span class="legend-line legend-line--dashed"></span>
+                                    Co-requisito
+                                </span>
+                            </div>
+                        </div>
+                    </aside>
+
+                    <div class="floating-card floating-card--zoom">
+                        <div class="zoom-controls">
+                            <button id="zoom-out-btn" class="zoom-btn" title="Diminuir zoom">−</button>
+                            <span id="zoom-level" class="zoom-level">100%</span>
+                            <button id="zoom-in-btn" class="zoom-btn" title="Aumentar zoom">+</button>
+                        </div>
+                    </div>
+                </div>
             </div>
-            <label style="display: flex; align-items: center; gap: 8px; margin: 0;">
-                <input type="checkbox" id="filtro-pendentes"> Mostrar só matérias pendentes
-            </label>
-            <label style="display: flex; align-items: center; gap: 8px; margin: 0;">
-                <input type="checkbox" id="filtro-corequisitos"> Mostrar co-requisitos
-            </label>
-            <label style="display: flex; align-items: center; gap: 8px; margin: 0;">
-                <span>Grade:</span>
-                <select id="seletor-grade">
-                    <option value="grade2015.json">Grade 2015</option>
-                    <option value="grade2022.json">Grade 2022</option>
-                </select>
-            </label>
-            <label for="upload-historico" class="btn btn-historico" style="margin: 0; cursor:pointer; background-color: #007bff; color: white;">Enviar Histórico</label>
-            <input type="file" id="upload-historico" accept="application/pdf" style="display:none;">
-            <div class="zoom-controls">
-                <button id="zoom-in-btn" class="zoom-btn" title="Aumentar zoom">🔍+</button>
-                <span id="zoom-level" class="zoom-level">100%</span>
-                <button id="zoom-out-btn" class="zoom-btn" title="Diminuir zoom">🔍−</button>
-            </div>
-        </div>
-        <div id="grade-container"></div>
+
+            <div id="grade-container"></div>
         </section>
 
         <section id="tela-planos" class="view-section">
@@ -80,28 +95,6 @@
     </div>
     <!-- Adicione pdf.js via CDN -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
-    <script src="script.js"></script>
-    <script>
-        // Verificar se há JSON salvo no localStorage
-        document.addEventListener('DOMContentLoaded', () => {
-            // Inicializar controles de zoom
-            inicializarControlesZoom();
-            
-            const jsonSalvo = localStorage.getItem('gradeCurricularJSON');
-            if (jsonSalvo) {
-                try {
-                    const dados = JSON.parse(jsonSalvo);
-                    criarGradeCurricular(dados);
-                } catch (error) {
-                    console.error('Erro ao carregar JSON do localStorage:', error);
-                }
-            }
-            
-            // Botão para importar JSON
-            // ...existing code...
-            
-            // ...existing code...
-        });
-    </script>
+    <script type="module" src="assets/js/app.js"></script>
 </body>
 </html>
